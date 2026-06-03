@@ -19,7 +19,6 @@ export function Wrapper({ children }: React.PropsWithChildren): React.JSX.Elemen
     return <div className="tesseract">
         <Fiber.Canvas flat linear>
             <DREI.AdaptiveDpr />
-            <DREI.Sky />
             <ambientLight />
             {children}
         </Fiber.Canvas>
@@ -28,8 +27,17 @@ export function Wrapper({ children }: React.PropsWithChildren): React.JSX.Elemen
 
 export function Page({ children, position, focused }: { position: THREE.Vector3, focused?: boolean } & React.PropsWithChildren): React.JSX.Element {
     const groupRef = React.useRef<THREE.Group>(null);
+    const [hasLooked, setHasLooked] = React.useState(false);
 
-    Fiber.useFrame((state, delta) => { if (groupRef.current && focused) lerpCameraLook(state, groupRef.current.position, delta); });
+    Fiber.useFrame((state, delta) => {
+        if (groupRef.current && focused) {
+            lerpCameraLook(state, groupRef.current.position, delta);
+            if (!hasLooked) {
+                groupRef.current.lookAt(state.camera.position);
+                setHasLooked(true);
+            }
+        }
+    });
 
     return <group position={position} ref={groupRef}>
         <DREI.Html transform occlude>
@@ -50,7 +58,8 @@ export function Modal({ title, blocking, children }: { title: string, blocking?:
                 batchRenderer.current.addSystem((child as QUARKS.ParticleEmitter).system);
             }
         });
-        batchRenderer.current.position.y = 0.2;
+        batchRenderer.current.position.y = 1.5;
+        batchRenderer.current.position.z = -0.0005;
         group.add(MODAL_PARTICLE_SYSTEM, batchRenderer.current);
         return (): void => { group.remove(batchRenderer.current); };
     }, []);
@@ -62,10 +71,15 @@ export function Modal({ title, blocking, children }: { title: string, blocking?:
     });
 
     return <group ref={groupRef}>
-        <DREI.Html transform occlude className="modal">
+        <DREI.Html transform occlude className="panel modal" scale={1 / 6}>
             <h1>{title}</h1>
             {children}
         </DREI.Html>
+        <pointLight position={[0, 0.2, -0.01]} />
+        <mesh position={[0, 0, -0.001]} scale={[6, 2, 1]}>
+            <planeGeometry />
+            <meshPhongMaterial />
+        </mesh>
     </group>;
 }
 

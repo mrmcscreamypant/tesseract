@@ -13,6 +13,7 @@
         "@react-three/drei": "^10.7.7",
         "@react-three/fiber": "^9.6.1",
         "react-router": "^7.15.1",
+        "tesseract": "link:",
         "three": "^0.184.0",
         "three.quarks": "^0.17.1"
     },
