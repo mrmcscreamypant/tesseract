@@ -40,9 +40,9 @@ export function Page({ children, position, focused }: { position: THREE.Vector3,
     return <group position={position} ref={groupRef}>
         <DREI.Html transform occlude className='panel page'>
             <Arwes.Animator>
-                <Arwes.FrameNefrex animated />
+                <Arwes.FrameNefrex styled animated />
+                {children}
             </Arwes.Animator>
-            {children}
         </DREI.Html>
     </group>;
 }
