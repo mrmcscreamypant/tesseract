@@ -4,19 +4,42 @@
     left: 0px;
     width: 100vw;
     height: 100vh;
+}
 
+.panel {
+    width: calc(40px*3*var(--panel-width));
+    height: calc(40px*3*var(--panel-height));
+    padding: 20px;
+    overflow-y: visible;
+    -webkit-font-smoothing: subpixel-antialiased;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+}
+
+.page {
+    --arwes-frames-bg-color: rgba(0, 85, 0, 0.5);
+    --arwes-frames-deco-color: red;
+    --arwes-frames-line-color: rgba(0, 128, 0, 0.805);
 }
 
 .modal {
-    font-size: 40px;
+    font-size: 20px;
     --panel-width: 6;
     --panel-height: 2;
 
+    --arwes-frames-bg-color: rgba(0, 85, 0, 0.5);
+    --arwes-frames-deco-color: red;
+    --arwes-frames-line-color: rgba(0, 128, 0, 0.805);
+
     button {
-        font-size: 40px;
+        font-size: 20px;
     }
 
     input {
-        font-size: 40px;
+        font-size: 20px;
     }
+}
+
+.arwes-frames-frame {
+    z-index: -1;
 }
