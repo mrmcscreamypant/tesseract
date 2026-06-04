@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import * as Arwes from '@arwes/react';
 import * as Theme from '@arwes/theme';
 import * as Fiber from '@react-three/fiber';
@@ -28,8 +28,8 @@ export function Page({ children, position, focused }: { position: THREE.Vector3,
     const [hasLooked, setHasLooked] = React.useState(false);
 
     Fiber.useFrame((state, delta) => {
-        if (groupRef.current && focused) {
-            lerpCameraLook(state, groupRef.current.position, delta);
+        if (groupRef.current) {
+            if (focused) lerpCameraLook(state, groupRef.current.position, delta);
             if (!hasLooked) {
                 groupRef.current.lookAt(state.camera.position);
                 setHasLooked(true);
@@ -40,7 +40,7 @@ export function Page({ children, position, focused }: { position: THREE.Vector3,
     return <group position={position} ref={groupRef}>
         <DREI.Html transform occlude className='panel page'>
             <Arwes.Animator>
-                <Arwes.FrameNefrex styled animated />
+                <Arwes.FrameCorners styled animated />
                 {children}
             </Arwes.Animator>
         </DREI.Html>
@@ -50,7 +50,6 @@ export function Page({ children, position, focused }: { position: THREE.Vector3,
 export function Modal({ title, blocking, children }: { title: string, blocking?: boolean } & React.PropsWithChildren): React.JSX.Element {
     const groupRef = React.useRef<THREE.Group>(null);
 
-
     Fiber.useFrame((state, delta) => {
         if (groupRef.current) lerpCameraLook(state, groupRef.current.position, delta);
     });
@@ -59,13 +58,28 @@ export function Modal({ title, blocking, children }: { title: string, blocking?:
         <DREI.Html transform occlude className="panel modal" scale={1 / 3}>
             <Arwes.Animator duration={{ enter: 1.5, exit: 1.5 }}>
                 <Arwes.FrameKranox animated positioned />
-                <Arwes.Text as="h1" manager="decipher">{title}</Arwes.Text>
+                <Arwes.Text as="h1" manager="decipher" easing="outSine" fixed>{title}</Arwes.Text>
                 {children}
             </Arwes.Animator>
         </DREI.Html>
     </group>;
 }
 
+function LinkFrame(): React.JSX.Element {
+    return <Arwes.Animator>
+        <Arwes.FrameNefrex animated positioned />
+    </Arwes.Animator>;
+}
+
 export function Link({ navigate, to, refresh, disabled, children, ...options }: { navigate: Router.NavigateFunction, to: string, refresh?: boolean, disabled?: boolean } & React.PropsWithChildren & Router.NavigateOptions): React.JSX.Element {
-    return disabled ? <a>{children}</a> : refresh ? <a href={to}>{children}</a> : <a href="" onClick={event => { event.preventDefault(); void navigate(to, options); }}>{children}</a>;
+    return disabled ? <a className="link">
+        <LinkFrame />
+        {children}
+    </a> : refresh ? <a className="link link-enabled" href={to}>
+        <LinkFrame />
+        {children}
+    </a> : <a className="link link-enabled" href="" onClick={event => { event.preventDefault(); void navigate(to, options); }}>
+        <LinkFrame />
+        {children}
+    </a>;
 }
