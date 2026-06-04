@@ -46,22 +46,6 @@
     color: white;
 }
 
-@property --arwes-frames-bg-color {
-    syntax: "<color>";
-    inital-value: black;
-    inherits: true;
-}
-
-@property --arwes-frames-deco-color {
-    syntax: "<color>";
-    inherits: true;
-}
-
-@property --arwes-frames-line-color {
-    syntax: "<color>";
-    inherits: true;
-}
-
 .modal {
     font-size: 20px;
     --panel-width: 6;

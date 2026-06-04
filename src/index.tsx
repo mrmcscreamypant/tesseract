@@ -7,10 +7,12 @@ import * as Router from 'react-router';
 import * as THREE from 'three';
 import './index.css';
 
-function lerpCameraLook(state: Fiber.RootState, position: THREE.Vector3, delta: number): void {
+function lerpCameraLook(state: Fiber.RootState, position: THREE.Vector3, delta: number): number {
     const oldQuat = state.camera.quaternion.clone();
     state.camera.lookAt(position);
-    state.camera.quaternion.copy(state.camera.quaternion.rotateTowards(oldQuat, oldQuat.angleTo(state.camera.quaternion) * (1 - 0.9 * delta)));
+    const distance = oldQuat.angleTo(state.camera.quaternion);
+    state.camera.quaternion.copy(state.camera.quaternion.rotateTowards(oldQuat, distance * (1 - 0.9 * delta)));
+    return distance;
 }
 
 export function Wrapper({ children }: React.PropsWithChildren): React.JSX.Element {
@@ -26,10 +28,12 @@ export function Wrapper({ children }: React.PropsWithChildren): React.JSX.Elemen
 export function Page({ children, position, focused }: { position: THREE.Vector3, focused?: boolean } & React.PropsWithChildren): React.JSX.Element {
     const groupRef = React.useRef<THREE.Group>(null);
     const [hasLooked, setHasLooked] = React.useState(false);
+    const [hasFocused, setHasFocused] = React.useState(false);
 
     Fiber.useFrame((state, delta) => {
         if (groupRef.current) {
-            if (focused) lerpCameraLook(state, groupRef.current.position, delta);
+            if (focused && !hasFocused) if (lerpCameraLook(state, groupRef.current.position, delta) <= 0.01) setHasFocused(true);
+
             if (!hasLooked) {
                 groupRef.current.lookAt(state.camera.position);
                 setHasLooked(true);
@@ -49,9 +53,10 @@ export function Page({ children, position, focused }: { position: THREE.Vector3,
 
 export function Modal({ title, blocking, children }: { title: string, blocking?: boolean } & React.PropsWithChildren): React.JSX.Element {
     const groupRef = React.useRef<THREE.Group>(null);
+    const [hasLooked, setHasLooked] = React.useState(false);
 
     Fiber.useFrame((state, delta) => {
-        if (groupRef.current) lerpCameraLook(state, groupRef.current.position, delta);
+        if (groupRef.current && !hasLooked) if (lerpCameraLook(state, groupRef.current.position, delta) <= 0.01) setHasLooked(true);
     });
 
     return <group ref={groupRef}>
