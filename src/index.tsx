@@ -1,6 +1,5 @@
-import React, { forwardRef } from 'react';
+import React from 'react';
 import * as Arwes from '@arwes/react';
-import * as Theme from '@arwes/theme';
 import * as Fiber from '@react-three/fiber';
 import * as DREI from '@react-three/drei';
 import * as Router from 'react-router';
@@ -22,7 +21,7 @@ export function Wrapper({ children }: React.PropsWithChildren): React.JSX.Elemen
             <ambientLight />
             {children}
         </Fiber.Canvas>
-    </div>;
+    </div >;
 }
 
 export function Page({ children, position, focused }: { position: THREE.Vector3, focused?: boolean } & React.PropsWithChildren): React.JSX.Element {
