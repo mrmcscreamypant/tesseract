@@ -24,7 +24,7 @@ export function Wrapper({ children }: React.PropsWithChildren): React.JSX.Elemen
     </div >;
 }
 
-export function Page({ children, position, focused }: { position: THREE.Vector3, focused?: boolean } & React.PropsWithChildren): React.JSX.Element {
+export function Page({ children, position, focused, hidden }: { position: THREE.Vector3, focused?: boolean, hidden?: boolean } & React.PropsWithChildren): React.JSX.Element {
     const groupRef = React.useRef<THREE.Group>(null);
     const [hasLooked, setHasLooked] = React.useState(false);
     const [hasFocused, setHasFocused] = React.useState(false);
@@ -42,8 +42,8 @@ export function Page({ children, position, focused }: { position: THREE.Vector3,
 
     return <group position={position} ref={groupRef}>
         <DREI.Html transform occlude className='panel page'>
-            <Arwes.Animator>
-                <Arwes.FrameCorners styled animated />
+            <Arwes.Animator active={!hidden}>
+                <Arwes.FrameCorners animated />
                 {children}
             </Arwes.Animator>
         </DREI.Html>
@@ -61,7 +61,7 @@ export function Modal({ title, blocking, children }: { title: string, blocking?:
     return <group ref={groupRef}>
         <DREI.Html transform occlude className="panel modal" scale={1 / 3}>
             <Arwes.Animator duration={{ enter: 1.5, exit: 1.5 }}>
-                <Arwes.FrameKranox animated positioned />
+                <Arwes.FrameKranox animated />
                 <Arwes.Text as="h1" manager="decipher" easing="outSine" fixed>{title}</Arwes.Text>
                 {children}
             </Arwes.Animator>
