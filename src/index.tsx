@@ -17,9 +17,11 @@ function lerpCameraLook(state: Fiber.RootState, position: THREE.Vector3, delta: 
 export function Wrapper({ children }: React.PropsWithChildren): React.JSX.Element {
     return <div className="tesseract">
         <Fiber.Canvas flat linear>
-            <DREI.AdaptiveDpr />
-            <ambientLight />
-            {children}
+            <ModalProvider>
+                <DREI.AdaptiveDpr />
+                <ambientLight />
+                {children}
+            </ModalProvider>
         </Fiber.Canvas>
     </div >;
 }
@@ -50,7 +52,29 @@ export function Page({ children, position, focused, hidden }: { position: THREE.
     </group>;
 }
 
-export function Modal({ title, blocking, children }: { title: string, blocking?: boolean } & React.PropsWithChildren): React.JSX.Element {
+export interface IModalConfig extends React.PropsWithChildren {
+    title: string,
+    body?: string,
+}
+
+const ModalContext = React.createContext<{ ctx: IModalConfig, setCtx: (value: IModalConfig) => void }>(null);
+
+export function useModal(config: IModalConfig): void {
+    const { setCtx } = React.useContext(ModalContext);
+    React.useEffect(() => setCtx(config), [config]);
+}
+
+function ModalProvider({ children }: React.PropsWithChildren): React.JSX.Element {
+    const [ctx, setCtx] = React.useState<IModalConfig>(null);
+    return <ModalContext value={{ ctx, setCtx }}>
+        {children}
+        {ctx && <Modal title={ctx.title} body={ctx?.body}>
+            {ctx?.children}
+        </Modal>}
+    </ModalContext>;
+}
+
+function Modal({ title, body, children }: IModalConfig): React.JSX.Element {
     const groupRef = React.useRef<THREE.Group>(null);
     const [hasLooked, setHasLooked] = React.useState(false);
 
@@ -63,6 +87,7 @@ export function Modal({ title, blocking, children }: { title: string, blocking?:
             <Arwes.Animator duration={{ enter: 1.5, exit: 1.5 }}>
                 <Arwes.FrameKranox animated />
                 <Arwes.Text as="h1" manager="decipher" easing="outSine" fixed>{title}</Arwes.Text>
+                <Arwes.Text as="div">{body}</Arwes.Text>
                 {children}
             </Arwes.Animator>
         </DREI.Html>
