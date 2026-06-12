@@ -59,22 +59,28 @@ export interface IModalConfig extends React.PropsWithChildren {
 
 const ModalContext = React.createContext<{ ctx: IModalConfig, setCtx: (value: IModalConfig) => void }>(null);
 
-export function useModal(config: IModalConfig): void {
-    const { setCtx } = React.useContext(ModalContext);
-    React.useEffect(() => setCtx(config), [config]);
+export function useModal(config: IModalConfig, active: boolean): void {
+    const { ctx, setCtx } = React.useContext(ModalContext);
+    React.useEffect(() => {
+        setCtx(active ? config : null);
+        return (): void => { if (ctx === config) setCtx(null); };
+    }, [config, ctx, active]);
+    React.useEffect(() => { if (!ctx && active) { setCtx(config); } }, [config, ctx, active]);
 }
 
 function ModalProvider({ children }: React.PropsWithChildren): React.JSX.Element {
     const [ctx, setCtx] = React.useState<IModalConfig>(null);
+    const [oldCtx, setOldCtx] = React.useState<IModalConfig>(null);
+    React.useEffect(() => { if (ctx) setOldCtx(ctx); }, [ctx]);
     return <ModalContext value={{ ctx, setCtx }}>
         {children}
-        {ctx && <Modal title={ctx.title} body={ctx?.body}>
-            {ctx?.children}
+        {oldCtx && <Modal active={!!ctx} title={oldCtx.title} body={oldCtx?.body}>
+            {oldCtx?.children}
         </Modal>}
     </ModalContext>;
 }
 
-function Modal({ title, body, children }: IModalConfig): React.JSX.Element {
+function Modal({ active, title, body, children }: { active: boolean } & IModalConfig): React.JSX.Element {
     const groupRef = React.useRef<THREE.Group>(null);
     const [hasLooked, setHasLooked] = React.useState(false);
 
@@ -84,7 +90,7 @@ function Modal({ title, body, children }: IModalConfig): React.JSX.Element {
 
     return <group ref={groupRef}>
         <DREI.Html transform occlude className="panel modal" scale={1 / 3}>
-            <Arwes.Animator duration={{ enter: 1.5, exit: 1.5 }}>
+            <Arwes.Animator active={active}>
                 <Arwes.FrameKranox animated />
                 <Arwes.Text as="h1" manager="decipher" easing="outSine" fixed>{title}</Arwes.Text>
                 <Arwes.Text as="div">{body}</Arwes.Text>
