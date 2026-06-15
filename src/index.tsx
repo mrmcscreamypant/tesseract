@@ -37,7 +37,7 @@ export function Wrapper({ children }: React.PropsWithChildren): React.JSX.Elemen
                 </ModalProvider>
             </Fiber.Canvas>
         </WrapperContext>
-    </div >;
+    </div>;
 }
 
 export function Page({ children, position, focused, hidden }: { position: THREE.Vector3, focused?: boolean, hidden?: boolean } & React.PropsWithChildren): React.JSX.Element {
