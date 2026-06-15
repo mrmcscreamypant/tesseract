@@ -14,15 +14,29 @@ function lerpCameraLook(state: Fiber.RootState, position: THREE.Vector3, delta: 
     return distance;
 }
 
+interface IWrapperContext {
+    backgroundColor: string;
+}
+
+const WrapperContext = React.createContext<{ tesseractContext: IWrapperContext, setTesseractContext: (value: IWrapperContext) => void }>(null);
+
+export function useTessractContext(): { tesseractContext: IWrapperContext, setTesseractContext: (value: IWrapperContext) => void } {
+    return React.useContext(WrapperContext);
+}
+
 export function Wrapper({ children }: React.PropsWithChildren): React.JSX.Element {
-    return <div className="tesseract">
-        <Fiber.Canvas flat linear>
-            <ModalProvider>
-                <DREI.AdaptiveDpr />
-                <ambientLight />
-                {children}
-            </ModalProvider>
-        </Fiber.Canvas>
+    const [tesseractContext, setTesseractContext] = React.useState<IWrapperContext>({ backgroundColor: "black" });
+
+    return <div className="tesseract" style={{ backgroundColor: tesseractContext.backgroundColor }}>
+        <WrapperContext value={{ tesseractContext, setTesseractContext }}>
+            <Fiber.Canvas flat linear>
+                <ModalProvider>
+                    <DREI.AdaptiveDpr />
+                    <ambientLight />
+                    {children}
+                </ModalProvider>
+            </Fiber.Canvas>
+        </WrapperContext>
     </div >;
 }
 
@@ -52,25 +66,25 @@ export function Page({ children, position, focused, hidden }: { position: THREE.
     </group>;
 }
 
-export interface IModalConfig extends React.PropsWithChildren {
+export interface IModalContext extends React.PropsWithChildren {
     title: string,
     body?: string,
 }
 
-const ModalContext = React.createContext<{ ctx: IModalConfig, setCtx: (value: IModalConfig) => void }>(null);
+const ModalContext = React.createContext<{ ctx: IModalContext, setCtx: (value: IModalContext) => void }>(null);
 
-export function useModal(config: IModalConfig, active: boolean): void {
+export function useModal(context: IModalContext, active: boolean): void {
     const { ctx, setCtx } = React.useContext(ModalContext);
     React.useEffect(() => {
-        setCtx(active ? config : null);
-        return (): void => { if (ctx === config) setCtx(null); };
-    }, [config, ctx, active]);
-    React.useEffect(() => { if (!ctx && active) { setCtx(config); } }, [config, ctx, active]);
+        setCtx(active ? context : null);
+        return (): void => { if (ctx === context) setCtx(null); };
+    }, [context, ctx, active]);
+    React.useEffect(() => { if (!ctx && active) { setCtx(context); } }, [context, ctx, active]);
 }
 
 function ModalProvider({ children }: React.PropsWithChildren): React.JSX.Element {
-    const [ctx, setCtx] = React.useState<IModalConfig>(null);
-    const [oldCtx, setOldCtx] = React.useState<IModalConfig>(null);
+    const [ctx, setCtx] = React.useState<IModalContext>(null);
+    const [oldCtx, setOldCtx] = React.useState<IModalContext>(null);
     React.useEffect(() => { if (ctx) setOldCtx(ctx); }, [ctx]);
     return <ModalContext value={{ ctx, setCtx }}>
         {children}
@@ -80,7 +94,7 @@ function ModalProvider({ children }: React.PropsWithChildren): React.JSX.Element
     </ModalContext>;
 }
 
-function Modal({ active, title, body, children }: { active: boolean } & IModalConfig): React.JSX.Element {
+function Modal({ active, title, body, children }: { active: boolean } & IModalContext): React.JSX.Element {
     const groupRef = React.useRef<THREE.Group>(null);
     const [hasLooked, setHasLooked] = React.useState(false);
 
