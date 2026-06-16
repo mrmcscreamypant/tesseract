@@ -40,7 +40,7 @@ export function Wrapper({ children }: React.PropsWithChildren): React.JSX.Elemen
     </div>;
 }
 
-export function Page({ children, position, focused, hidden }: { position: THREE.Vector3, focused?: boolean, hidden?: boolean } & React.PropsWithChildren): React.JSX.Element {
+export function Page({ children, position, focused, hidden, xray }: { position: THREE.Vector3, focused?: boolean, hidden?: boolean, xray?: boolean } & React.PropsWithChildren): React.JSX.Element {
     const groupRef = React.useRef<THREE.Group>(null);
     const [hasLooked, setHasLooked] = React.useState(false);
     const [hasFocused, setHasFocused] = React.useState(false);
@@ -57,7 +57,7 @@ export function Page({ children, position, focused, hidden }: { position: THREE.
     });
 
     return <group position={position} ref={groupRef}>
-        <DREI.Html transform occlude className='panel page'>
+        <DREI.Html transform occlude={!xray} className='panel page'>
             <Arwes.Animator active={!hidden}>
                 <Arwes.FrameCorners animated />
                 {children}
