@@ -29,7 +29,7 @@ export function Wrapper({ children }: React.PropsWithChildren): React.JSX.Elemen
 
     return <div className="tesseract" style={{ backgroundColor: tesseractContext.backgroundColor }}>
         <WrapperContext value={{ tesseractContext, setTesseractContext }}>
-            <Fiber.Canvas flat linear>
+            <Fiber.Canvas>
                 <ModalProvider>
                     <DREI.AdaptiveDpr />
                     <ambientLight />
