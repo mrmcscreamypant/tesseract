@@ -27,17 +27,22 @@ export function useTessractContext(): { tesseractContext: IWrapperContext, setTe
 export function Wrapper({ children }: React.PropsWithChildren): React.JSX.Element {
     const [tesseractContext, setTesseractContext] = React.useState<IWrapperContext>({ backgroundColor: "black" });
 
-    return <div className="tesseract" style={{ backgroundColor: tesseractContext.backgroundColor }}>
-        <WrapperContext value={{ tesseractContext, setTesseractContext }}>
-            <Fiber.Canvas>
+    const containerRef = React.useRef<HTMLDivElement>(null);
+
+    return <WrapperContext value={{ tesseractContext, setTesseractContext }}>
+        <div ref={containerRef} className="tesseract">
+            <DREI.View className="tesseract" style={{ backgroundColor: tesseractContext.backgroundColor }}>
                 <ModalProvider>
                     <DREI.AdaptiveDpr />
                     <ambientLight />
                     {children}
                 </ModalProvider>
+            </DREI.View>
+            <Fiber.Canvas eventSource={containerRef}>
+                <DREI.View.Port />
             </Fiber.Canvas>
-        </WrapperContext>
-    </div>;
+        </div>
+    </WrapperContext>;
 }
 
 export function Page({ children, position, focused, hidden, xray }: { position: THREE.Vector3, focused?: boolean, hidden?: boolean, xray?: boolean } & React.PropsWithChildren): React.JSX.Element {
