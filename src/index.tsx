@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import * as Arwes from '@arwes/react';
 import * as Fiber from '@react-three/fiber';
 import * as DREI from '@react-three/drei';
@@ -20,28 +21,34 @@ interface IWrapperContext {
 
 const WrapperContext = React.createContext<{ tesseractContext: IWrapperContext, setTesseractContext: (value: IWrapperContext) => void }>(null);
 
+const OverlayContext = React.createContext<HTMLDivElement>(null);
+
 export function useTessractContext(): { tesseractContext: IWrapperContext, setTesseractContext: (value: IWrapperContext) => void } {
     return React.useContext(WrapperContext);
 }
 
 export function Wrapper({ children }: React.PropsWithChildren): React.JSX.Element {
     const [tesseractContext, setTesseractContext] = React.useState<IWrapperContext>({ backgroundColor: "black" });
+    const [overlay, setOverlay] = React.useState<HTMLDivElement>(null);
 
     const containerRef = React.useRef<HTMLDivElement>(null);
 
     return <WrapperContext value={{ tesseractContext, setTesseractContext }}>
-        <div ref={containerRef} className="tesseract">
-            <DREI.View className="tesseract" style={{ backgroundColor: tesseractContext.backgroundColor }}>
-                <ModalProvider>
-                    <DREI.AdaptiveDpr />
-                    <ambientLight />
-                    {children}
-                </ModalProvider>
-            </DREI.View>
-            <Fiber.Canvas eventSource={containerRef}>
-                <DREI.View.Port />
-            </Fiber.Canvas>
-        </div>
+        <OverlayContext value={overlay}>
+            <div ref={containerRef} className="tesseract">
+                <DREI.View className="tesseract" style={{ backgroundColor: tesseractContext.backgroundColor }}>
+                    <ModalProvider>
+                        <DREI.AdaptiveDpr />
+                        <ambientLight />
+                        {children}
+                    </ModalProvider>
+                </DREI.View>
+                <Fiber.Canvas eventSource={containerRef} style={{ zIndex: 1000000 }}>
+                    <DREI.View.Port />
+                </Fiber.Canvas>
+            </div>
+        </OverlayContext>
+        <div ref={setOverlay} className="overlays-container page" />
     </WrapperContext>;
 }
 
@@ -108,7 +115,7 @@ function Modal({ active, title, body, children }: { active: boolean } & IModalCo
     });
 
     return <group ref={groupRef}>
-        <DREI.Html transform occlude className="panel modal" scale={1 / 3}>
+        <DREI.Html transform occlude className="panel modal page" scale={1 / 3}>
             <Arwes.Animator active={active}>
                 <Arwes.FrameKranox animated />
                 <Arwes.Text as="h1" manager="decipher" easing="outSine" fixed>{title}</Arwes.Text>
@@ -121,7 +128,7 @@ function Modal({ active, title, body, children }: { active: boolean } & IModalCo
 
 function LinkFrame(): React.JSX.Element {
     return <Arwes.Animator>
-        <Arwes.FrameNefrex animated positioned />
+        <Arwes.FrameNefrex animated />
     </Arwes.Animator>;
 }
 
@@ -136,4 +143,14 @@ export function Link({ navigate, to, refresh, disabled, children, ...options }: 
         <LinkFrame />
         {children}
     </a>;
+}
+
+export function Overlay({ children }: React.PropsWithChildren): React.JSX.Element {
+    const overlay = React.useContext(OverlayContext);
+    return <DREI.Html>{overlay && createPortal(
+        <div className="overlay">
+            {children}
+        </div>,
+        overlay
+    )}</DREI.Html>;
 }
