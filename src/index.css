@@ -6,7 +6,7 @@
     left: 0px;
     width: 100vw;
     height: 100vh;
-    
+
     font-family: "Saira", sans-serif;
     font-optical-sizing: auto;
 }
@@ -23,7 +23,7 @@
 
 .page {
     --arwes-frames-bg-color: rgba(0, 85, 0, 0.5);
-    --arwes-frames-deco-color: red;
+    --arwes-frames-deco-color: limegreen;
     --arwes-frames-line-color: rgba(0, 128, 0, 0.805);
 }
 
