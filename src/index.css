@@ -72,7 +72,7 @@
     pointer-events: none;
     overflow: scroll;
 
-    *:first-child {
+    div {
         pointer-events: all;
     }
 }
