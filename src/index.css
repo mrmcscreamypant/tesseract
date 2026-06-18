@@ -1,14 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,100..900;1,100..900&display=swap');
 
+* {
+    font-family: "Saira", sans-serif;
+    font-optical-sizing: auto;
+}
+
 .tesseract {
     position: absolute;
     top: 0px;
     left: 0px;
     width: 100vw;
     height: 100vh;
-
-    font-family: "Saira", sans-serif;
-    font-optical-sizing: auto;
 
     pointer-events: all;
 }
