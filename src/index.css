@@ -60,7 +60,7 @@
     }
 }
 
-.overlays-container {
+.overlay {
     position: absolute;
     top: 0px;
     left: 0px;
@@ -68,13 +68,9 @@
     height: 100vh;
 
     pointer-events: none;
-}
-
-.overlay {
-    width: min-content;
-    pointer-events: all;
-
-    max-height: 100vh;
-
     overflow: scroll;
+
+    *:first-child {
+        pointer-events: all;
+    }
 }

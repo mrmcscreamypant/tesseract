@@ -43,12 +43,12 @@ export function Wrapper({ children }: React.PropsWithChildren): React.JSX.Elemen
                         {children}
                     </ModalProvider>
                 </DREI.View>
-                <Fiber.Canvas eventSource={containerRef} style={{ zIndex: 1000000 }}>
+                <Fiber.Canvas eventSource={containerRef} style={{ zIndex: 1000000 }} shadows>
                     <DREI.View.Port />
                 </Fiber.Canvas>
             </div>
         </OverlayContext>
-        <div ref={setOverlay} className="overlays-container page" />
+        <div ref={setOverlay} className="page" />
     </WrapperContext>;
 }
 
