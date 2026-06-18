@@ -63,6 +63,8 @@
 .overlay {
     display: flex;
 
+    z-index: 1000000000;
+
     position: absolute;
     top: 0px;
     left: 0px;
