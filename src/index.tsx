@@ -1,6 +1,7 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import * as Arwes from '@arwes/react';
+import * as ArwesEffects from '@arwes/react-effects';
 import * as Fiber from '@react-three/fiber';
 import * as DREI from '@react-three/drei';
 import * as Router from 'react-router';
@@ -72,6 +73,7 @@ export function Page({ children, position, focused, hidden, xray }: { position: 
         <DREI.Html transform occlude={!xray} className='panel page'>
             <Arwes.Animator active={!hidden}>
                 <Arwes.FrameCorners animated />
+                <ArwesEffects.Illuminator />
                 {children}
             </Arwes.Animator>
         </DREI.Html>
@@ -117,7 +119,7 @@ function Modal({ active, title, body, children }: { active: boolean } & IModalCo
     return <group ref={groupRef}>
         <DREI.Html transform occlude className="panel modal page" scale={1 / 3}>
             <Arwes.Animator active={active}>
-                <Arwes.FrameKranox animated />
+                <Arwes.FrameKranox animated className="modal-frame" />
                 <Arwes.Text as="h1" manager="decipher" easing="outSine" fixed>{title}</Arwes.Text>
                 <Arwes.Text as="div">{body}</Arwes.Text>
                 {children}
