@@ -10,6 +10,7 @@
     "packageManager": "pnpm@10.28.2",
     "dependencies": {
         "@arwes/react": "1.0.0-next.25020502",
+        "@arwes/react-effects": "1.0.0-next.25020502",
         "@arwes/theme": "1.0.0-next.25020502",
         "@react-spring/web": "^10.1.1",
         "@react-three/drei": "^10.7.7",

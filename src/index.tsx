@@ -126,25 +126,6 @@ function Modal({ active, title, body, children }: { active: boolean } & IModalCo
     </group>;
 }
 
-function LinkFrame(): React.JSX.Element {
-    return <Arwes.Animator>
-        <Arwes.FrameNefrex animated />
-    </Arwes.Animator>;
-}
-
-export function Link({ navigate, to, refresh, disabled, children, ...options }: { navigate: Router.NavigateFunction, to: string, refresh?: boolean, disabled?: boolean } & React.PropsWithChildren & Router.NavigateOptions): React.JSX.Element {
-    return disabled ? <a className="link">
-        <LinkFrame />
-        {children}
-    </a> : refresh ? <a className="link link-enabled" href={to}>
-        <LinkFrame />
-        {children}
-    </a> : <a className="link link-enabled" href="" onClick={event => { event.preventDefault(); void navigate(to, options); }}>
-        <LinkFrame />
-        {children}
-    </a>;
-}
-
 export function Overlay({ children }: React.PropsWithChildren): React.JSX.Element {
     const overlay = React.useContext(OverlayContext);
     return <DREI.Html>{overlay && createPortal(
