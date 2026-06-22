@@ -73,7 +73,6 @@ export function Page({ children, position, focused, hidden, xray }: { position: 
         <DREI.Html transform occlude={!xray} className='panel page'>
             <Arwes.Animator active={!hidden}>
                 <Arwes.FrameCorners className="page-frame" animated />
-                <ArwesEffects.Illuminator />
                 {children}
             </Arwes.Animator>
         </DREI.Html>

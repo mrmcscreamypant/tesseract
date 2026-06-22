@@ -64,3 +64,11 @@
         pointer-events: all;
     }
 }
+
+.page-illuminator {
+    z-index: -1;
+}
+
+.page-frame {
+    z-index: -1;
+}
